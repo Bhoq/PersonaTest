@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonaTest</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .hero {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2.2rem;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .progress-text {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: bold;
+    }
+
+    .tag {
+      font-size: 12px;
+      background: #eef2ff;
+      color: #4f46e5;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+    }
+
+    .progress {
+      width: 100%;
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #667eea, #7c3aed);
+      transition: width 0.25s ease;
+    }
+
+    .question {
+      font-size: 1.35rem;
+      font-weight: bold;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      color: #111827;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 15px 16px;
+      background: #fafafa;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .option:hover {
+      background: #eef2ff;
+      border-color: #667eea;
+      transform: translateY(-1px);
+    }
+
+    .result {
+      display: none;
+    }
+
+    .result h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #4338ca;
+      text-align: center;
+    }
+
+    .highlight-box {
+      background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+      border: 1px solid #ddd6fe;
+      border-radius: 16px;
+      padding: 18px;
+      margin: 16px 0 20px;
+    }
+
+    .result-line {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin: 10px 0;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 24px 0 12px;
+      color: #312e81;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .scores {
+      display: grid;
+      gap: 10px;
+    }
+
+    .score-item {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      line-height: 1.5;
+    }
+
+    .entrepreneur-box {
+      background: linear-gradient(135deg, #ecfeff, #eff6ff);
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .entrepreneur-score {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1d4ed8;
+      margin: 4px 0 10px;
+    }
+
+    .analysis-box {
+      background: #fffaf0;
+      border: 1px solid #fde68a;
+      border-radius: 16px;
+      padding: 16px;
+      line-height: 1.7;
+    }
+
+    .share-card {
+      margin-top: 14px;
+      padding: 24px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      text-align: center;
+    }
+
+    .share-card h3 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
+    .share-card p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+
+    .share-mini {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: none;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #4f46e5, #7c3aed);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #eef2ff;
+      color: #4338ca;
+    }
+
+    .disclaimer {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+    }
+
+    @media (max-width: 760px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .question {
+        font-size: 1.15rem;
+      }
+
+      .result h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>PersonaTest</h1>
+      <p>Discover your personality style, career fit, entrepreneur potential, and shareable result.</p>
+    </div>
+
+    <div class="card" id="quizCard">
+      <div class="top-row">
+        <div class="progress-text" id="progressText">Question 1 of 25</div>
+        <div class="tag">Personality • Career • Business</div>
+      </div>
+
+      <div class="progress">
+        <div class="bar" id="progressBar"></div>
+      </div>
+
+      <div class="question" id="questionText"></div>
+      <div class="options" id="optionsBox"></div>
+    </div>
+
+    <div class="card result" id="resultCard">
+      <h2 id="personalityTitle"></h2>
+
+      <div class="highlight-box">
+        <div class="result-line" id="personalityLine"></div>
+        <div class="result-line" id="careerLine"></div>
+        <div class="result-line" id="businessLine"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="section-title">Personality Radar Chart</div>
+          <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="panel">
+          <div class="section-title">Trait Scores</div>
+          <div class="scores">
+            <div class="score-item"><strong>Openness:</strong> <span id="openScore"></span></div>
+            <div class="score-item"><strong>Conscientiousness:</strong> <span id="consScore"></span></div>
+            <div class="score-item"><strong>Extraversion:</strong> <span id="extraScore"></span></div>
+            <div class="score-item"><strong>Agreeableness:</strong> <span id="agreeScore"></span></div>
+            <div class="score-item"><strong>Emotional Stability:</strong> <span id="stableScore"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Entrepreneur Potential</div>
+      <div class="entrepreneur-box">
+        <div class="entrepreneur-score" id="entrepreneurScore"></div>
+        <div class="result-line" id="entrepreneurLine"></div>
+      </div>
+
+      <div class="section-title">Deeper Personality Analysis</div>
+      <div class="analysis-box" id="analysisText"></div>
+
+      <div class="section-title">Shareable Result Card</div>
+      <div class="share-card" id="shareCard">
+        <h3 id="shareType"></h3>
+        <p id="shareTraits"></p>
+        <p id="shareCareer"></p>
+        <p id="shareBusiness"></p>
+        <div class="share-mini">PersonaTest Result</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="downloadCard()">Download My Result</button>
+        <button class="btn btn-secondary" onclick="restartQuiz()">Restart Test</button>
+      </div>
+
+      <div class="disclaimer">
+        This is a simple personality-style quiz inspired by common academic personality frameworks.
+        It is not a clinical, hiring, or university-certified assessment.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { text: "You enjoy exploring new ideas and unfamiliar topics.", trait: "openness" },
+      { text: "You like having a clear plan before starting something.", trait: "conscientiousness" },
+      { text: "You feel energized after spending time with other people.", trait: "extraversion" },
+      { text: "You usually try to avoid conflict and keep harmony.", trait: "agreeableness" },
+      { text: "You stay calm under pressure.", trait: "stability" },
+      { text: "You enjoy art, imagination, or creative thinking.", trait: "openness" },
+      { text: "You complete tasks on time and follow through.", trait: "conscientiousness" },
+      { text: "You are comfortable starting conversations first.", trait: "extraversion" },
+      { text: "You are considerate of other people's feelings.", trait: "agreeableness" },
+      { text: "You recover quickly from stress or setbacks.", trait: "stability" },
+      { text: "You are curious about different cultures and perspectives.", trait: "openness" },
+      { text: "You keep your work or home organized.", trait: "conscientiousness" },
+      { text: "You enjoy group settings more than being alone.", trait: "extraversion" },
+      { text: "People would describe you as warm and cooperative.", trait: "agreeableness" },
+      { text: "You rarely overthink minor problems.", trait: "stability" },
+      { text: "You like experimenting rather than doing things the usual way.", trait: "openness" },
+      { text: "You pay attention to details.", trait: "conscientiousness" },
+      { text: "You feel comfortable being the center of attention.", trait: "extraversion" },
+      { text: "You often put others' needs into consideration.", trait: "agreeableness" },
+      { text: "You stay emotionally balanced in difficult situations.", trait: "stability" },
+      { text: "You enjoy learning things that challenge your thinking.", trait: "openness" },
+      { text: "You prefer routines that help you stay productive.", trait: "conscientiousness" },
+      { text: "You speak up easily in meetings or social settings.", trait: "extraversion" },
+      { text: "You tend to trust and support people unless given a reason not to.", trait: "agreeableness" },
+      { text: "You do not get overwhelmed easily.", trait: "stability" }
+    ];
+
+    const answerOptions = [
+      { label: "Strongly Disagree", value: 1 },
+      { label: "Disagree", value: 2 },
+      { label: "Neutral", value: 3 },
+      { label: "Agree", value: 4 },
+      { label: "Strongly Agree", value: 5 }
+    ];
+
+    let currentQuestion = 0;
+    let radarChart = null;
+
+    let scores = {
+      openness: 0,
+      conscientiousness: 0,
+      extraversion: 0,
+      agreeableness: 0,
+      stability: 0
+    };
+
+    function level(score) {
+      if (score >= 22) return "High";
+      if (score >= 16) return "Moderate";
+      return "Lower";
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("progressText").textContent =
+        "Question " + (currentQuestion + 1) + " of " + questions.length;
+
+      document.getElementById("progressBar").style.width =
+        ((currentQuestion / questions.length) * 100) + "%";
+
+      document.getElementById("questionText").textContent = q.text;
+
+      const optionsBox = document.getElementById("optionsBox");
+      optionsBox.innerHTML = "";
+
+      answerOptions.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option.label;
+        btn.onclick = function () {
+          scores[q.trait] += option.value;
+          currentQuestion++;
+
+          if (currentQuestion < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        };
+        optionsBox.appendChild(btn);
+      });
+    }
+
+    function getTopTraits(open, cons, extra, agree, stab) {
+      const traits = [
+        { name: "curious", score: open },
+        { name: "disciplined", score: cons },
+        { name: "social", score: extra },
+        { name: "supportive", score: agree },
+        { name: "steady", score: stab }
+      ];
+
+      traits.sort((a, b) => b.score - a.score);
+      return traits.slice(0, 3).map(t => t.name);
+    }
+
+    function getEntrepreneurScore(open, cons, extra, stab) {
+      const raw =
+        (open * 0.35) +
+        (extra * 0.25) +
+        (stab * 0.25) +
+        (cons * 0.15);
+
+      return Math.round((raw / 25) * 100);
+    }
+
+    function entrepreneurMessage(score) {
+      if (score >= 80) {
+        return "You show strong entrepreneurial potential. You likely enjoy ideas, momentum, resilience, and turning concepts into action.";
+      }
+      if (score >= 60) {
+        return "You have solid business potential. With focus and consistency, you could do well in entrepreneurship or leadership.";
+      }
+      if (score >= 40) {
+        return "You appear balanced between stable career paths and business potential. Your success may depend more on experience and discipline than natural tendency alone.";
+      }
+      return "You may currently be more naturally suited to structured roles than high-risk entrepreneurship, though skills can always be developed.";
+    }
+
+    function deeperAnalysis(title, open, cons, extra, agree, stab) {
+      let text = "Your answers suggest a blend of personality traits that influences how you work, connect with others, and make decisions. ";
+
+      if (title === "Creative Explorer") {
+        text += "You seem driven by curiosity and ideas. You are likely energized by learning, innovation, and environments where you can think beyond routine. You may do your best work when you have freedom to explore and create.";
+      } else if (title === "Strategic Operator") {
+        text += "You appear highly structured and dependable. You likely value clarity, planning, and follow-through. You may thrive in roles where systems, execution, and measurable results matter.";
+      } else if (title === "Social Leader") {
+        text += "You seem naturally people-oriented and expressive. You may gain energy from visibility, collaboration, and influencing outcomes through communication and relationships.";
+      } else if (title === "Supportive Collaborator") {
+        text += "You appear warm, cooperative, and relationship-aware. You may be especially effective in environments that need empathy, teamwork, and trust-building.";
+      } else if (title === "Calm Problem Solver") {
+        text += "You seem emotionally steady and composed. You may perform especially well in stressful situations because you are able to stay grounded and think clearly.";
+      } else {
+        text += "You appear practical and flexible, with a balanced mix of traits rather than one extreme. You may adapt well across different teams and work environments.";
+      }
+
+      if (open >= 22) text += " A very high openness score suggests strong imagination, intellectual curiosity, and comfort with change.";
+      if (cons >= 22) text += " A very high conscientiousness score suggests you may be especially disciplined, responsible, and reliable.";
+      if (extra >= 22) text += " A very high extraversion score suggests you likely enjoy action, interaction, and outward expression.";
+      if (agree >= 22) text += " A very high agreeableness score suggests kindness, diplomacy, and strong people awareness.";
+      if (stab >= 22) text += " A very high emotional stability score suggests resilience and calm under pressure.";
+
+      return text;
+    }
+
+    function buildRadarChart(open, cons, extra, agree, stab) {
+      const ctx = document.getElementById("radarChart");
+
+      if (radarChart) {
+        radarChart.destroy();
+      }
+
+      radarChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels: [
+            "Openness",
+            "Conscientiousness",
+            "Extraversion",
+            "Agreeableness",
+            "Emotional Stability"
+          ],
+          datasets: [{
+            label: "Your Personality",
+            data: [open, cons, extra, agree, stab],
+            fill: true,
+            backgroundColor: "rgba(99, 102, 241, 0.2)",
+            borderColor: "rgba(79, 70, 229, 1)",
+            pointBackgroundColor: "rgba(79, 70, 229, 1)",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "rgba(79, 70, 229, 1)"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              min: 0,
+              max: 25,
+              ticks: {
+                stepSize: 5
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    function showResults() {
+      document.getElementById("quizCard").style.display = "none";
+      document.getElementById("resultCard").style.display = "block";
+
+      const open = scores.openness;
+      const cons = scores.conscientiousness;
+      const extra = scores.extraversion;
+      const agree = scores.agreeableness;
+      const stab = scores.stability;
+
+      document.getElementById("openScore").textContent = open + "/25 (" + level(open) + ")";
+      document.getElementById("consScore").textContent = cons + "/25 (" + level(cons) + ")";
+      document.getElementById("extraScore").textContent = extra + "/25 (" + level(extra) + ")";
+      document.getElementById("agreeScore").textContent = agree + "/25 (" + level(agree) + ")";
+      document.getElementById("stableScore").textContent = stab + "/25 (" + level(stab) + ")";
+
+      const maxTrait = Math.max(open, cons, extra, agree, stab);
+
+      let title = "";
+      let personalityText = "";
+      let careerText = "";
+      let businessText = "";
+
+      if (maxTrait === open && open >= 18) {
+        title = "Creative Explorer";
+        personalityText = "You are a curious, imaginative, and idea-driven person who likes learning, exploring, and thinking beyond the obvious.";
+        careerText = "Jobs that may suit you: research, strategy, product thinking, writing, design, innovation, UX, analytics, consulting.";
+        businessText = "Business tendency: You may do well in entrepreneurship, especially in creative, educational, digital, or knowledge-based businesses.";
+      } else if (maxTrait === cons && cons >= 18) {
+        title = "Strategic Operator";
+        personalityText = "You are disciplined, organized, and dependable. You like structure, follow-through, and getting things done the right way.";
+        careerText = "Jobs that may suit you: operations, project management, finance, business analysis, program management, reporting, administration.";
+        businessText = "Business tendency: You could do well running a structured business because you naturally value systems, planning, and execution.";
+      } else if (maxTrait === extra && extra >= 18) {
+        title = "Social Leader";
+        personalityText = "You are outgoing, expressive, and energized by people. You naturally connect, influence, and build momentum in groups.";
+        careerText = "Jobs that may suit you: sales, partnerships, recruiting, customer success, leadership, public relations, business development, marketing.";
+        businessText = "Business tendency: You may thrive in business, especially in client-facing or networking-heavy ventures.";
+      } else if (maxTrait === agree && agree >= 18) {
+        title = "Supportive Collaborator";
+        personalityText = "You are warm, cooperative, and considerate. You care about people, teamwork, and creating trust and harmony.";
+        careerText = "Jobs that may suit you: HR, customer success, teaching, counseling, healthcare coordination, team support, nonprofit work.";
+        businessText = "Business tendency: You may succeed in service-based businesses built on relationships, trust, and care.";
+      } else if (maxTrait === stab && stab >= 18) {
+        title = "Calm Problem Solver";
+        personalityText = "You are steady, resilient, and composed under pressure. You tend to think clearly and stay grounded in difficult situations.";
+        careerText = "Jobs that may suit you: consulting, analytics, operations, leadership, crisis management, quality assurance, decision-support roles.";
+        businessText = "Business tendency: You may do well in business because you can stay calm and make balanced decisions when things get stressful.";
+      } else {
+        title = "Balanced Practical Thinker";
+        personalityText = "You are a balanced person with a practical mindset. You can adapt to different situations and bring a grounded perspective.";
+        careerText = "Jobs that may suit you: business support, analyst roles, coordination, operations, administration, cross-functional team roles.";
+        businessText = "Business tendency: You may do well either in a stable career path or in a small business, depending on your skills and goals.";
+      }
+
+      document.getElementById("personalityTitle").textContent = title;
+      document.getElementById("personalityLine").textContent = personalityText;
+      document.getElementById("careerLine").textContent = careerText;
+      document.getElementById("businessLine").textContent = businessText;
+
+      buildRadarChart(open, cons, extra, agree, stab);
+
+      const entScore = getEntrepreneurScore(open, cons, extra, stab);
+      document.getElementById("entrepreneurScore").textContent = entScore + "%";
+      document.getElementById("entrepreneurLine").textContent = entrepreneurMessage(entScore);
+
+      document.getElementById("analysisText").textContent =
+        deeperAnalysis(title, open, cons, extra, agree, stab);
+
+      const topTraits = getTopTraits(open, cons, extra, agree, stab);
+      document.getElementById("shareType").textContent = title;
+      document.getElementById("shareTraits").textContent =
+        "Traits: " + topTraits.join(" • ");
+      document.getElementById("shareCareer").textContent =
+        careerText.replace("Jobs that may suit you: ", "Career fit: ");
+      document.getElementById("shareBusiness").textContent =
+        "Entrepreneur potential: " + entScore + "%";
+    }
+
+    function downloadCard() {
+      html2canvas(document.querySelector("#shareCard"), {
+        backgroundColor: null,
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "persona-result.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      scores = {
+        openness: 0,
+        conscientiousness: 0,
+        extraversion: 0,
+        agreeableness: 0,
+        stability: 0
+      };
+
+      document.getElementById("resultCard").style.display = "none";
+      document.getElementById("quizCard").style.display = "block";
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
