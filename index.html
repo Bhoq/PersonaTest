@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PersonaTest</title>
+
+<style>
+
+body{
+font-family: "Segoe UI", sans-serif;
+background: linear-gradient(135deg,#667eea,#764ba2);
+margin:0;
+color:#333;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+padding:40px 20px;
+}
+
+.header{
+text-align:center;
+color:white;
+margin-bottom:25px;
+}
+
+.header h1{
+margin:0;
+font-size:36px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.progress{
+height:8px;
+background:#eee;
+border-radius:10px;
+margin-bottom:20px;
+overflow:hidden;
+}
+
+.bar{
+height:8px;
+background:#667eea;
+width:0%;
+}
+
+.question{
+font-size:22px;
+font-weight:600;
+margin-bottom:20px;
+}
+
+.option{
+width:100%;
+padding:14px;
+margin:8px 0;
+border-radius:10px;
+border:1px solid #ddd;
+background:#fafafa;
+cursor:pointer;
+font-size:16px;
+transition:all .2s;
+}
+
+.option:hover{
+background:#667eea;
+color:white;
+border-color:#667eea;
+}
+
+.result{
+text-align:center;
+display:none;
+}
+
+.result h2{
+color:#667eea;
+margin-bottom:10px;
+}
+
+.traits{
+margin-top:20px;
+text-align:left;
+}
+
+.restart{
+margin-top:20px;
+background:#667eea;
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>PersonaTest</h1>
+<p>Discover your personality style</p>
+</div>
+
+<div class="card" id="quiz">
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div class="question" id="question"></div>
+
+<div id="answers"></div>
+
+</div>
+
+<div class="card result" id="result">
+
+<h2 id="personality"></h2>
+
+<p id="summary"></p>
+
+<p id="careerFit"></p>
+
+<p id="businessFit"></p>
+
+<div class="traits">
+
+<p><b>Openness:</b> <span id="open"></span></p>
+<p><b>Conscientiousness:</b> <span id="cons"></span></p>
+<p><b>Extraversion:</b> <span id="extra"></span></p>
+<p><b>Agreeableness:</b> <span id="agree"></span></p>
+<p><b>Emotional Stability:</b> <span id="stable"></span></p>
+
+</div>
+
+<button class="restart" onclick="restartQuiz()">Restart Test</button>
+
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{q:"I enjoy exploring new ideas and learning new concepts.",t:"openness"},
+{q:"I like keeping my work organized.",t:"conscientiousness"},
+{q:"I enjoy meeting new people.",t:"extraversion"},
+{q:"I care about keeping harmony with others.",t:"agreeableness"},
+{q:"I stay calm under pressure.",t:"stability"},
+{q:"I enjoy creative thinking.",t:"openness"},
+{q:"I complete tasks on time.",t:"conscientiousness"},
+{q:"I feel energized around people.",t:"extraversion"},
+{q:"I am considerate of others.",t:"agreeableness"},
+{q:"I recover quickly from stress.",t:"stability"},
+{q:"I like trying new experiences.",t:"openness"},
+{q:"I pay attention to details.",t:"conscientiousness"},
+{q:"I enjoy social gatherings.",t:"extraversion"},
+{q:"People describe me as cooperative.",t:"agreeableness"},
+{q:"I stay emotionally balanced.",t:"stability"},
+{q:"I enjoy intellectual challenges.",t:"openness"},
+{q:"I prefer structured plans.",t:"conscientiousness"},
+{q:"I speak comfortably in groups.",t:"extraversion"},
+{q:"I trust people easily.",t:"agreeableness"},
+{q:"I handle setbacks well.",t:"stability"},
+{q:"I enjoy learning about different cultures.",t:"openness"},
+{q:"I stay disciplined in my goals.",t:"conscientiousness"},
+{q:"I am outgoing.",t:"extraversion"},
+{q:"I help people when they need it.",t:"agreeableness"},
+{q:"I remain calm in stressful situations.",t:"stability"}
+
+]
+
+const answers=[
+{label:"Strongly Disagree",v:1},
+{label:"Disagree",v:2},
+{label:"Neutral",v:3},
+{label:"Agree",v:4},
+{label:"Strongly Agree",v:5}
+]
+
+let current=0
+
+let scores={
+openness:0,
+conscientiousness:0,
+extraversion:0,
+agreeableness:0,
+stability:0
+}
+
+function render(){
+
+let q=questions[current]
+
+document.getElementById("question").innerText=q.q
+
+document.getElementById("bar").style.width=((current/questions.length)*100)+"%"
+
+let a=document.getElementById("answers")
+
+a.innerHTML=""
+
+answers.forEach(o=>{
+
+let b=document.createElement("button")
+
+b.className="option"
+
+b.innerText=o.label
+
+b.onclick=()=>{
+
+scores[q.t]+=o.v
+
+current++
+
+if(current<questions.length)render()
+
+else results()
+
+}
+
+a.appendChild(b)
+
+})
+
+}
+
+function level(s){
+
+if(s>=22)return"High"
+
+if(s>=16)return"Moderate"
+
+return"Low"
+
+}
+
+function results(){
+
+document.getElementById("quiz").style.display="none"
+
+document.getElementById("result").style.display="block"
+
+let open=scores.openness
+let cons=scores.conscientiousness
+let extra=scores.extraversion
+let agree=scores.agreeableness
+let stab=scores.stability
+
+document.getElementById("open").innerText=open
+document.getElementById("cons").innerText=cons
+document.getElementById("extra").innerText=extra
+document.getElementById("agree").innerText=agree
+document.getElementById("stable").innerText=stab
+
+let title=""
+let summary=""
+let career=""
+let business=""
+
+if(open>=20&&cons>=20){
+
+title="Strategic Builder"
+
+summary="You are analytical, curious, and structured."
+
+career="Good careers: Product manager, analyst, consultant, strategist, data professional."
+
+business="You have strong potential to run a business or startup."
+
+}
+
+else if(extra>=20){
+
+title="Social Leader"
+
+summary="You are energetic and thrive around people."
+
+career="Good careers: Sales, partnerships, leadership, marketing, recruiting."
+
+business="You could succeed in networking-driven businesses."
+
+}
+
+else if(cons>=20){
+
+title="Reliable Operator"
+
+summary="You are disciplined and dependable."
+
+career="Good careers: Operations, finance, project management, administration."
+
+business="You could manage structured businesses well."
+
+}
+
+else if(open>=20){
+
+title="Creative Thinker"
+
+summary="You are imaginative and idea-driven."
+
+career="Good careers: Innovation, design, research, strategy."
+
+business="You may enjoy building creative or knowledge-based businesses."
+
+}
+
+else{
+
+title="Balanced Thinker"
+
+summary="You are adaptable and practical."
+
+career="Good careers: Business roles, coordination, general management."
+
+business="You may succeed either in career paths or small businesses."
+
+}
+
+document.getElementById("personality").innerText=title
+
+document.getElementById("summary").innerText=summary
+
+document.getElementById("careerFit").innerText=career
+
+document.getElementById("businessFit").innerText=business
+
+}
+
+function restartQuiz(){
+
+location.reload()
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
